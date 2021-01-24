@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+#############################################
+#  Adam Squire | January 2021
+#  For jpg files named in the format
+#  YYYY-MM-DD-HH-MM-SS.jpg in the current 
+#  directory, create a directory YYYY-MM-DD if
+#  it doesn't exist. Move files into directory
+#  matching YYYY-MM-DD of file name to 
+#  directory name.
+###############################################
+
+directory=$(pwd)
+files=$(ls $directory | grep jpg)
+for f in $files
+do
+	dir=$(echo $f | cut -d"-" -f1,2,3)
+	if [ ! -d "$dir" ]; then
+		 mkdir "$directory/$dir"
+	fi
+	mv "$directory/$f" "$directory/$dir/"
+done

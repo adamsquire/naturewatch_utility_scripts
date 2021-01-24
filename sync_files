@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+##############################################
+#  Adam Squire | August 2020
+#  sync directory to remote based on latest
+#  files modified date compared to last sync
+#  date held in .cache/lastfiledate
+###############################################
+current_date=$(find /home/pi/NaturewatchCameraServer/www/photos -type f -printf '%TF %TT\n' | sort | tail -1)
+last_date=$(tail -1 /home/pi/.cache/lastfiledate)
+printf "run at %s, last synced file date %s, latest file date %s \n" "$(date)" "$last_date" "$current_date"
+if [ $(date -d "$last_date" +"%s") -lt $(date -d "$current_date" +"%s") ]; then
+	echo $current_date > /home/pi/.cache/lastfiledate
+	rsync -av /home/pi/NaturewatchCameraServer/www/photos/ -e "ssh -i/home/pi/.ssh/id_rsa" pi@naturewatch.domain.loc:/home/pi/NatureWatchPictures
+	echo "Done syncing"
+fi
